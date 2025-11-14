@@ -1,8 +1,10 @@
 package com.ggit;
 
 import java.util.Objects;
+import java.util.Random;
 
 public record Vector2D(int x, int y) {
+    private static Random random = new Random();
 
     public Vector2D add(Vector2D v) {
         return new Vector2D(x + v.x, y + v.y);
@@ -31,5 +33,9 @@ public record Vector2D(int x, int y) {
     @Override
     public String toString() {
         return String.format("(%d, %d)", x, y);
+    }
+
+    public static Vector2D random(int maxX, int maxY) {
+        return new Vector2D(random.nextInt(maxX), random.nextInt(maxY));
     }
 }
