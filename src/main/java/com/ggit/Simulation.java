@@ -3,8 +3,8 @@ package com.ggit;
 public class Simulation {
     private final WorldMap map;
 
-    public Simulation(int width, int height) {
-        map = new AnimalsEnclosure(width, height);
+    public Simulation(int width, int height, int noOfPlants, int noOfAnimals) {
+        map = new AnimalsEnclosure(width, height, noOfPlants, noOfAnimals);
     }
 
     public WorldMap getMap() {
