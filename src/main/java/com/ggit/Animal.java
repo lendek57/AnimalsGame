@@ -20,7 +20,7 @@ public class Animal {
 
     public void move(MapDirection direction, WorldMap map) {
         position = pbc(position.add(direction.getUnitVector()), map);
-        System.out.println("Animal moved to " + position);
+        System.out.printf("Animal %d moved to %s\n", id, position);
     }
 
     private Vector2D pbc(Vector2D newPosition, WorldMap map) {
