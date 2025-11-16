@@ -1,9 +1,17 @@
 package com.ggit;
 
 public class Simulation {
-    private WorldMap map;
+    private final WorldMap map;
 
-    Simulation(int width, int height) {
+    public Simulation(int width, int height) {
         map = new AnimalsEnclosure(width, height);
+    }
+
+    public WorldMap getMap() {
+        return map;
+    }
+
+    public void simulateDay() {
+        map.run();
     }
 }

@@ -14,6 +14,6 @@ public class AnimalsEnclosure extends AbstractWorldMap {
     @Override
     public void run() {
         MapDirection[] directions = MapDirection.values();
-        animal.move(directions[random.nextInt(directions.length)]);
+        animal.move(directions[random.nextInt(directions.length)], this);
     }
 }

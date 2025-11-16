@@ -1,12 +1,15 @@
 package com.ggit;
 
-import java.util.Random;
-
 public class Main {
-    private static int MAP_SIZE = 100;
+    private static final int MAP_SIZE = 3;
+    private static final int NO_OF_DAYS = 10;
 
-    static void main() {
-        Animal animal = new Animal(Vector2D.random(MAP_SIZE, MAP_SIZE));
-        System.out.println("Animal created at position " + animal.getPosition());
+    static void main(String[] args) {
+        int noOfDays = args.length > 0 ? Integer.parseInt(args[0]) : NO_OF_DAYS;
+        Simulation simulation = new Simulation(MAP_SIZE, MAP_SIZE);
+        for (int i = 0; i < noOfDays; i++) {
+            System.out.println("Day " + i);
+            simulation.simulateDay();
+        }
     }
 }
