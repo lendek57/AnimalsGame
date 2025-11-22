@@ -13,5 +13,6 @@ public class Simulation {
 
     public void simulateDay() {
         map.run();
+        map.feed();
     }
 }
