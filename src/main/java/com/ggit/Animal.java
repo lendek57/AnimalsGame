@@ -2,6 +2,8 @@ package com.ggit;
 
 public class Animal {
     private final int id;
+    private int energy = Simulation.ANIMAL_ENERGY;
+    private int age = 0;
     private Vector2D position;
     private static int counter = 0;
 
@@ -12,6 +14,22 @@ public class Animal {
 
     public int getId() {
         return id;
+    }
+
+    public int getEnergy() {
+        return energy;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void eat() {
+        energy += Simulation.PLANT_ENERGY;
+    }
+
+    public void ageOneDay() {
+        age++;
     }
 
     public Vector2D getPosition() {

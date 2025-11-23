@@ -10,8 +10,7 @@ public class Main {
         int noOfDays = args.length > 0 ? Integer.parseInt(args[0]) : NO_OF_DAYS;
         Simulation simulation = new Simulation(MAP_SIZE, MAP_SIZE, NO_OF_PLANTS, NO_OF_ANIMALS);
         for (int i = 0; i < noOfDays; i++) {
-            System.out.println("Day " + i);
-            simulation.simulateDay();
+            simulation.simulateDay(i);
         }
     }
 }

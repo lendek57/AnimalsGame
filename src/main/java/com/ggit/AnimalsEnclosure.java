@@ -16,20 +16,29 @@ public class AnimalsEnclosure extends AbstractWorldMap {
     @Override
     public void run() {
         MapDirection[] directions = MapDirection.values();
-        for (Animal animal : animals) {
-            animal.move(directions[random.nextInt(directions.length)], this);
-        }
+        animals.forEach(animal -> animal.move(directions[random.nextInt(directions.length)], this));
     }
 
     @Override
     public void feed() {
-        for (Animal animal : animals) {
+        animals.forEach(animal -> {
             if (isPositionOccupied(animal.getPosition())) {
-                System.out.printf("Animal %d ate plant", animal.getId());
                 removePlant(animal.getPosition());
+                animal.eat();
                 growPlant();
+                System.out.printf("Animal %d ate plant and now has energy level: %d\n", animal.getId(), animal.getEnergy());
             }
-        }
+        });
+    }
+
+    @Override
+    public void startDay(int dayNumber) {
+        System.out.println("Day number " + dayNumber);
+    }
+
+    @Override
+    public void endDay() {
+        animals.forEach(Animal::ageOneDay);
     }
 
     private void removePlant(Vector2D position) {
