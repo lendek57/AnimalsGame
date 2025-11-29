@@ -1,6 +1,6 @@
 package com.ggit;
 
-public class Animal {
+public class Animal implements Comparable<Animal> {
     private final int id;
     private int energy = Simulation.ANIMAL_ENERGY;
     private int age = 0;
@@ -28,8 +28,10 @@ public class Animal {
         energy += Simulation.PLANT_ENERGY;
     }
 
-    public void ageOneDay() {
+    public Animal ageOneDay() {
         age++;
+        energy -= Simulation.DAY_ENERGY;
+        return this;
     }
 
     public Vector2D getPosition() {
@@ -39,6 +41,11 @@ public class Animal {
     public void move(MapDirection direction, WorldMap map) {
         position = pbc(position.add(direction.getUnitVector()), map);
         System.out.printf("Animal %d moved to %s\n", id, position);
+    }
+
+    @Override
+    public int compareTo(Animal animal) {
+        return energy == animal.energy ? id - animal.id : energy - animal.energy;
     }
 
     private Vector2D pbc(Vector2D newPosition, WorldMap map) {

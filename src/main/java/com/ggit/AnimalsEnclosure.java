@@ -1,11 +1,11 @@
 package com.ggit;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AnimalsEnclosure extends AbstractWorldMap {
-    private List<Animal> animals = new LinkedList<>();
+    private AnimalsMapping animals = new AnimalsMapping();
     private Map<Vector2D, Plant> plants = new HashMap<>();
-    private static final Random random = new Random();
 
     public AnimalsEnclosure(int width, int height, int noOfPlants, int noOfAnimals) {
         super(width, height);
@@ -15,18 +15,19 @@ public class AnimalsEnclosure extends AbstractWorldMap {
 
     @Override
     public void run() {
-        MapDirection[] directions = MapDirection.values();
-        animals.forEach(animal -> animal.move(directions[random.nextInt(directions.length)], this));
+        animals.moveAnimals();
     }
 
     @Override
     public void feed() {
-        animals.forEach(animal -> {
-            if (isPositionOccupied(animal.getPosition())) {
-                removePlant(animal.getPosition());
-                animal.eat();
-                growPlant();
-                System.out.printf("Animal %d ate plant and now has energy level: %d\n", animal.getId(), animal.getEnergy());
+        animals.animalsByPosition.forEach((position, animalsOnPosition) -> {
+            if (isPositionOccupiedByPlant(position)) {
+                animalsOnPosition.stream().max(Animal::compareTo).ifPresent(animal -> {
+                    removePlant(position);
+                    animal.eat();
+                    growPlant();
+                    System.out.printf("Animal %d ate plant and now has energy level: %d\n", animal.getId(), animal.getEnergy());
+                });
             }
         });
     }
@@ -38,7 +39,13 @@ public class AnimalsEnclosure extends AbstractWorldMap {
 
     @Override
     public void endDay() {
-        animals.forEach(Animal::ageOneDay);
+        int animalsCount = animals.allAnimals.size();
+        animals.updateAllAnimals(
+                animals.allAnimals.stream()
+                        .map(Animal::ageOneDay)
+                        .filter(animal -> animal.getEnergy() > 0)
+                        .collect(Collectors.toList()), false);
+        System.out.printf("There were %d animals, %d animals left", animalsCount, animals.allAnimals.size());
     }
 
     private void removePlant(Vector2D position) {
@@ -47,7 +54,7 @@ public class AnimalsEnclosure extends AbstractWorldMap {
 
     private void createAnimals(int noOfAnimals) {
         for (int i = 0; i < noOfAnimals; i++) {
-            animals.add(new Animal(Vector2D.random(width, height)));
+            animals.addAnimal(new Animal(Vector2D.random(width, height)));
         }
     }
 
@@ -61,13 +68,43 @@ public class AnimalsEnclosure extends AbstractWorldMap {
         if (plants.size() == width * height) return;
 
         Vector2D newPosition = Vector2D.random(width, height);
-        while (isPositionOccupied(newPosition)) {
+        while (isPositionOccupiedByPlant(newPosition)) {
             newPosition = Vector2D.random(width, height);
         }
         plants.put(newPosition, new Plant(newPosition));
     }
 
-    private boolean isPositionOccupied(Vector2D position) {
+    private boolean isPositionOccupiedByPlant(Vector2D position) {
         return plants.containsKey(position);
+    }
+
+    private class AnimalsMapping {
+        private final List<Animal> allAnimals = new ArrayList<>();
+        private final Map<Vector2D, List<Animal>> animalsByPosition = new HashMap<>();
+
+        public void addAnimal(Animal animal) {
+            allAnimals.add(animal);
+            positionAnimalOnMap(animal);
+        }
+
+        public void moveAnimals() {
+            allAnimals.forEach(animal -> animal.move(MapDirection.random(), AnimalsEnclosure.this));
+            rebuildMap();
+        }
+
+        public void updateAllAnimals(List<Animal> animals, boolean rebuildMap) {
+            allAnimals.clear();
+            allAnimals.addAll(animals);
+            if (rebuildMap) rebuildMap();
+        }
+
+        private void rebuildMap() {
+            animalsByPosition.clear();
+            allAnimals.forEach(this::positionAnimalOnMap);
+        }
+
+        private void positionAnimalOnMap(Animal animal) {
+            animalsByPosition.computeIfAbsent(animal.getPosition(), _ -> new LinkedList<>()).add(animal);
+        }
     }
 }

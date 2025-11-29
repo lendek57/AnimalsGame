@@ -3,6 +3,7 @@ package com.ggit;
 public class Simulation {
     public static final int ANIMAL_ENERGY = 30;
     public static final int PLANT_ENERGY = 10;
+    public static final int DAY_ENERGY = 5;
 
     private final WorldMap map;
 
