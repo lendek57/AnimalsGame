@@ -1,11 +1,15 @@
 package com.ggit;
 
 import java.util.*;
+import java.util.function.ToDoubleBiFunction;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 public class AnimalsEnclosure extends AbstractWorldMap {
     private AnimalsMapping animals = new AnimalsMapping();
     private Map<Vector2D, Plant> plants = new HashMap<>();
+    private int dayNumber = 0;
 
     public AnimalsEnclosure(int width, int height, int noOfPlants, int noOfAnimals) {
         super(width, height);
@@ -33,7 +37,26 @@ public class AnimalsEnclosure extends AbstractWorldMap {
     }
 
     @Override
+    public void breed() {
+        List<Animal> children = animals.animalsByPosition.values().stream()
+                .map(this::chooseParents)
+                .filter(parents -> parents.size() == 2)
+                .map(parents -> parents.getFirst().reproduce(parents.get(1)))
+                .toList();
+        children.forEach(animals::addAnimal);
+    }
+
+    private List<Animal> chooseParents(List<Animal> animals) {
+        return animals.stream()
+                .filter(animal -> animal.getEnergy() >= Simulation.ANIMAL_ENERGY / 2)
+                .sorted(Comparator.reverseOrder())
+                .limit(2)
+                .toList();
+    }
+
+    @Override
     public void startDay(int dayNumber) {
+        this.dayNumber = dayNumber;
         System.out.println("Day number " + dayNumber);
     }
 
@@ -45,7 +68,22 @@ public class AnimalsEnclosure extends AbstractWorldMap {
                         .map(Animal::ageOneDay)
                         .filter(animal -> animal.getEnergy() > 0)
                         .collect(Collectors.toList()), false);
-        System.out.printf("There were %d animals, %d animals left", animalsCount, animals.allAnimals.size());
+        System.out.printf("There were %d animals, %d animals left\n", animalsCount, animals.allAnimals.size());
+        System.out.println(daySummary());
+    }
+
+    private SimulationStatistics daySummary() {
+        return new SimulationStatistics(
+                dayNumber,
+                mean(Animal::getAge),
+                mean(Animal::getNoOfChildren),
+                mean(Animal::getEnergy),
+                animals.allAnimals.size()
+        );
+    }
+
+    private double mean(ToDoubleFunction<Animal> mapper) {
+        return animals.allAnimals.stream().mapToDouble(mapper).sum() / animals.allAnimals.size();
     }
 
     private void removePlant(Vector2D position) {
@@ -88,7 +126,7 @@ public class AnimalsEnclosure extends AbstractWorldMap {
         }
 
         public void moveAnimals() {
-            allAnimals.forEach(animal -> animal.move(MapDirection.random(), AnimalsEnclosure.this));
+            allAnimals.forEach(animal -> animal.moveBasedOnGenome(AnimalsEnclosure.this));
             rebuildMap();
         }
 

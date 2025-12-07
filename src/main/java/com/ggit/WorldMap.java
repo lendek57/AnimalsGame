@@ -5,6 +5,7 @@ public interface WorldMap {
     int getWidth();
     void run();
     void feed();
+    void breed();
     void startDay(int dayNumber);
     void endDay();
 }

@@ -19,6 +19,7 @@ public class Simulation {
         map.startDay(dayNumber);
         map.run();
         map.feed();
+        map.breed();
         map.endDay();
     }
 }

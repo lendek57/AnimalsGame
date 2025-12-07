@@ -1,15 +1,23 @@
 package com.ggit;
 
 public class Animal implements Comparable<Animal> {
-    private final int id;
+    private final int id = counter++;
     private int energy = Simulation.ANIMAL_ENERGY;
     private int age = 0;
+    private int noOfChildren = 0;
+    private final Genome genome;
     private Vector2D position;
     private static int counter = 0;
 
     public Animal(Vector2D position) {
         this.position = position;
-        this.id = counter++;
+        genome = new Genome();
+    }
+
+    public Animal(Animal mather, Animal father) {
+        energy = (mather.energy + father.energy) / 4;
+        genome = new Genome(mather.genome, father.genome);
+        position = mather.position.add(MapDirection.random().getUnitVector());
     }
 
     public int getId() {
@@ -24,6 +32,10 @@ public class Animal implements Comparable<Animal> {
         return age;
     }
 
+    public Genome getGenome() {
+        return genome;
+    }
+
     public void eat() {
         energy += Simulation.PLANT_ENERGY;
     }
@@ -34,6 +46,20 @@ public class Animal implements Comparable<Animal> {
         return this;
     }
 
+    public Animal reproduce(Animal father) {
+        energy = energy * 3 / 4;
+        father.energy = father.energy * 3 / 4;
+        noOfChildren++;
+        father.noOfChildren++;
+        Animal child = new Animal(this, father);
+        System.out.printf("New child at %s, id = %d\n", child.getPosition(), child.getId());
+        return child;
+    }
+
+    public int getNoOfChildren() {
+        return noOfChildren;
+    }
+
     public Vector2D getPosition() {
         return position;
     }
@@ -41,6 +67,10 @@ public class Animal implements Comparable<Animal> {
     public void move(MapDirection direction, WorldMap map) {
         position = pbc(position.add(direction.getUnitVector()), map);
         System.out.printf("Animal %d moved to %s\n", id, position);
+    }
+
+    public void moveBasedOnGenome(WorldMap map) {
+        move(genome.randomGene(), map);
     }
 
     @Override
