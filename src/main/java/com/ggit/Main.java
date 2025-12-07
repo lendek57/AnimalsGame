@@ -1,17 +1,14 @@
 package com.ggit;
 
-import com.google.gson.Gson;
+import com.ggit.json.JsonParser;
+import com.ggit.simulation.Simulation;
 
 public class Main {
-    private static final int MAP_SIZE = 10;
     private static final int NO_OF_DAYS = 10;
-    private static final int NO_OF_PLANTS = 40;
-    private static final int NO_OF_ANIMALS = 60;
 
     static void main(String[] args) {
-        Gson gson = new Gson();
         int noOfDays = args.length > 0 ? Integer.parseInt(args[0]) : NO_OF_DAYS;
-        Simulation simulation = new Simulation(MAP_SIZE, MAP_SIZE, NO_OF_PLANTS, NO_OF_ANIMALS);
+        Simulation simulation = new Simulation(JsonParser.readConfig());
         for (int i = 0; i < noOfDays; i++) {
             simulation.simulateDay(i);
         }

@@ -1,16 +1,18 @@
-package com.ggit;
+package com.ggit.simulation;
 
 public class Animal implements Comparable<Animal> {
     private final int id = counter++;
-    private int energy = Simulation.ANIMAL_ENERGY;
+    private int energy;
     private int age = 0;
     private int noOfChildren = 0;
     private final Genome genome;
     private Vector2D position;
     private static int counter = 0;
+    private final int DAY_ENERGY = 5;
 
-    public Animal(Vector2D position) {
+    public Animal(Vector2D position, int baseEnergy) {
         this.position = position;
+        this.energy = baseEnergy;
         genome = new Genome();
     }
 
@@ -36,13 +38,13 @@ public class Animal implements Comparable<Animal> {
         return genome;
     }
 
-    public void eat() {
-        energy += Simulation.PLANT_ENERGY;
+    public void eat(int plantEnergy) {
+        energy += plantEnergy;
     }
 
     public Animal ageOneDay() {
         age++;
-        energy -= Simulation.DAY_ENERGY;
+        energy -= DAY_ENERGY;
         return this;
     }
 

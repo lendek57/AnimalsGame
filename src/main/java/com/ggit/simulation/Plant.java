@@ -1,4 +1,4 @@
-package com.ggit;
+package com.ggit.simulation;
 
 public class Plant {
     private Vector2D position;

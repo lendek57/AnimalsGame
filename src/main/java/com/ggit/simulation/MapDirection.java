@@ -1,4 +1,4 @@
-package com.ggit;
+package com.ggit.simulation;
 
 import java.util.Random;
 

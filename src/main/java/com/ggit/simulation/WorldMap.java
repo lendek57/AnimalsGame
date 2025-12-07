@@ -1,4 +1,4 @@
-package com.ggit;
+package com.ggit.simulation;
 
 public interface WorldMap {
     int getHeight();

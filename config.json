@@ -1,0 +1,8 @@
+{
+  "animalsCount": 100,
+  "plantsCount": 150,
+  "animalEnergy": 30,
+  "plantEnergy": 15,
+  "width": 10,
+  "height": 15
+}

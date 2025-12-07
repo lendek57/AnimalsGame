@@ -1,20 +1,25 @@
-package com.ggit;
+package com.ggit.simulation;
+
+import com.ggit.json.JsonParser;
+import com.ggit.json.SimulationParams;
 
 import java.util.*;
-import java.util.function.ToDoubleBiFunction;
 import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 public class AnimalsEnclosure extends AbstractWorldMap {
     private AnimalsMapping animals = new AnimalsMapping();
     private Map<Vector2D, Plant> plants = new HashMap<>();
+    private final int animalEnergy;
+    private final int plantEnergy;
     private int dayNumber = 0;
 
-    public AnimalsEnclosure(int width, int height, int noOfPlants, int noOfAnimals) {
-        super(width, height);
-        createAnimals(noOfAnimals);
-        createPlants(noOfPlants);
+    public AnimalsEnclosure(SimulationParams config) {
+        super(config.width(), config.height());
+        createAnimals(config.animalsCount());
+        createPlants(config.plantsCount());
+        this.animalEnergy = config.animalEnergy();
+        this.plantEnergy = config.plantEnergy();
     }
 
     @Override
@@ -28,7 +33,7 @@ public class AnimalsEnclosure extends AbstractWorldMap {
             if (isPositionOccupiedByPlant(position)) {
                 animalsOnPosition.stream().max(Animal::compareTo).ifPresent(animal -> {
                     removePlant(position);
-                    animal.eat();
+                    animal.eat(plantEnergy);
                     growPlant();
                     System.out.printf("Animal %d ate plant and now has energy level: %d\n", animal.getId(), animal.getEnergy());
                 });
@@ -48,7 +53,7 @@ public class AnimalsEnclosure extends AbstractWorldMap {
 
     private List<Animal> chooseParents(List<Animal> animals) {
         return animals.stream()
-                .filter(animal -> animal.getEnergy() >= Simulation.ANIMAL_ENERGY / 2)
+                .filter(animal -> animal.getEnergy() >= animalEnergy / 2)
                 .sorted(Comparator.reverseOrder())
                 .limit(2)
                 .toList();
@@ -69,7 +74,7 @@ public class AnimalsEnclosure extends AbstractWorldMap {
                         .filter(animal -> animal.getEnergy() > 0)
                         .collect(Collectors.toList()), false);
         System.out.printf("There were %d animals, %d animals left\n", animalsCount, animals.allAnimals.size());
-        System.out.println(daySummary());
+        JsonParser.dumpStatsToFile(daySummary());
     }
 
     private SimulationStatistics daySummary() {
@@ -83,7 +88,7 @@ public class AnimalsEnclosure extends AbstractWorldMap {
     }
 
     private double mean(ToDoubleFunction<Animal> mapper) {
-        return animals.allAnimals.stream().mapToDouble(mapper).sum() / animals.allAnimals.size();
+        return animals.allAnimals.stream().mapToDouble(mapper).average().orElse(0);
     }
 
     private void removePlant(Vector2D position) {
@@ -92,7 +97,7 @@ public class AnimalsEnclosure extends AbstractWorldMap {
 
     private void createAnimals(int noOfAnimals) {
         for (int i = 0; i < noOfAnimals; i++) {
-            animals.addAnimal(new Animal(Vector2D.random(width, height)));
+            animals.addAnimal(new Animal(Vector2D.random(width, height), animalEnergy));
         }
     }
 
