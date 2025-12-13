@@ -55,6 +55,6 @@ public class Logger {
     }
 
     private static void safeDeleteFile(Path file) {
-        IOUtils.toUnchecked(() -> Files.delete(path));
+        IOUtils.toUnchecked(() -> Files.delete(file));
     }
 }

@@ -77,6 +77,16 @@ public class AnimalsEnclosure extends AbstractWorldMap {
         JsonParser.dumpStatsToFile(daySummary());
     }
 
+    @Override
+    public Map<Vector2D, List<Animal>> animalsMap() {
+        return animals.animalsByPosition;
+    }
+
+    @Override
+    public Map<Vector2D, Plant> plantsLocations() {
+        return plants;
+    }
+
     private SimulationStatistics daySummary() {
         return new SimulationStatistics(
                 dayNumber,
