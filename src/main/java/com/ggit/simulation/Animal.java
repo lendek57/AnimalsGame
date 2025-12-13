@@ -16,10 +16,10 @@ public class Animal implements Comparable<Animal> {
         genome = new Genome();
     }
 
-    public Animal(Animal mather, Animal father) {
+    public Animal(Animal mather, Animal father, WorldMap map) {
         energy = (mather.energy + father.energy) / 4;
         genome = new Genome(mather.genome, father.genome);
-        position = mather.position.add(MapDirection.random().getUnitVector());
+        position = pbc(mather.position.add(MapDirection.random().getUnitVector()), map);
     }
 
     public int getId() {
@@ -48,12 +48,12 @@ public class Animal implements Comparable<Animal> {
         return this;
     }
 
-    public Animal reproduce(Animal father) {
+    public Animal reproduce(Animal father, WorldMap map) {
         energy = energy * 3 / 4;
         father.energy = father.energy * 3 / 4;
         noOfChildren++;
         father.noOfChildren++;
-        Animal child = new Animal(this, father);
+        Animal child = new Animal(this, father, map);
         System.out.printf("New child at %s, id = %d\n", child.getPosition(), child.getId());
         return child;
     }

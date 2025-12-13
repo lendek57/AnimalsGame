@@ -46,7 +46,7 @@ public class AnimalsEnclosure extends AbstractWorldMap {
         List<Animal> children = animals.animalsByPosition.values().stream()
                 .map(this::chooseParents)
                 .filter(parents -> parents.size() == 2)
-                .map(parents -> parents.getFirst().reproduce(parents.get(1)))
+                .map(parents -> parents.getFirst().reproduce(parents.get(1), this))
                 .toList();
         children.forEach(animals::addAnimal);
     }

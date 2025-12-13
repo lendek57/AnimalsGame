@@ -1,5 +1,6 @@
 package com.ggit.json;
 
+import com.ggit.logging.Logger;
 import com.ggit.simulation.SimulationStatistics;
 import com.google.gson.Gson;
 
@@ -9,7 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class JsonParser {
-    private static final Gson gson = new Gson();
+    private static final Gson gson = GsonConfig.getIntance();
     private static final String STATS_PATH = "./stats.json";
     private static final String CONFIG_PATH = "./config.json";
 
